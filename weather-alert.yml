@@ -1,0 +1,36 @@
+name: Weather Alert Bot
+
+on:
+  schedule:
+    # ၁၅ မိနစ်တစ်ခါ run (သင်လိုသလို ပြောင်းလို့ရတယ်)
+    - cron: '*/15 * * * *'
+    
+    # နာရီတိုင်း run ချင်ရင်:
+    # - cron: '0 * * * *'
+    
+  workflow_dispatch:  # Manual run လုပ်လို့ရအောင်
+
+jobs:
+  run-weather-bot:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: 🤖 Run Weather Alert Bot
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+        run: python weather_bot.py
